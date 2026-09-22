@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#b88cff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Medora Planner">
+<meta name="description" content="Medora — a flexible, aesthetic professional exam study planner.">
+
+<title>Medora • Professional Exam Planner</title>
+<style>
+:root{--bg:#fbf8ff;--card:#fff;--ink:#463c50;--muted:#91869b;--line:#eee7f1;--accent:#9a73c6;--soft:#f4eafa;--pink:#f4c4da;--blue:#cbe5f5;--sage:#cfe8d5}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 5% 0,#f8d7e7 0,transparent 27%),radial-gradient(circle at 100% 0,#dcecff 0,transparent 28%),linear-gradient(135deg,#fffaff,#f7fbff)}
+.app{max-width:1180px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center}.logo{font-weight:900;letter-spacing:.8px}.logo span{color:var(--accent)}
+.hero{margin-top:16px;padding:28px;border-radius:30px;background:linear-gradient(130deg,#f8cadf,#ded3fa 55%,#c9e8f5);box-shadow:0 18px 50px #72547d18;position:relative;overflow:hidden}.hero:after{content:"✦  ✧  ✦  ✧";position:absolute;right:22px;top:20px;font-size:30px;opacity:.3}.eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.65}.hero h1{margin:7px 0;font-size:36px}.quote{font:italic 17px Georgia,serif;max-width:680px}.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}button,input{font:inherit;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);padding:9px 11px}button{cursor:pointer}.primary{background:#5d496e;color:#fff;border:0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:15px 0}.stat{background:#fff;border:1px solid var(--line);border-radius:19px;padding:14px;box-shadow:0 7px 24px #765b8010}.stat small{color:var(--muted)}.stat b{display:block;font-size:22px;margin-top:3px}
+.layout{display:grid;grid-template-columns:1fr 280px;gap:14px}.panel{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:16px;box-shadow:0 10px 35px #765b8012}.section{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.day{border:1px solid var(--line);border-radius:17px;overflow:hidden}.dayhead{padding:10px;background:linear-gradient(135deg,#fcf4f9,#f4f0fb)}.dayname{width:100%;border:0;background:transparent;font-weight:800;padding:2px 0}.daydate{width:100%;border:0;background:transparent;color:var(--muted);font-size:11px;padding:2px 0}.entry{padding:8px;border-top:1px solid #f1ebf3}.entryrow{display:grid;grid-template-columns:1fr 1fr;gap:5px}.entry input{width:100%;font-size:10.5px;padding:7px;background:#fcf9fd}.entry .topic{margin-top:5px}.entry input:focus,.dayhead input:focus{outline:2px solid #dcc9ec}
+.check label{display:block;background:#faf8fc;border-radius:12px;padding:9px;margin:6px 0;font-size:13px}.check input{accent-color:var(--accent);padding:0}.motto{margin-top:15px;border-radius:17px;padding:16px;text-align:center;background:linear-gradient(135deg,#fff3f8,#f2efff);font:italic 16px Georgia,serif}.small{font-size:11px;color:var(--muted)}.palette{display:flex;gap:8px;margin-top:8px}.dot{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 8px #0002;cursor:pointer}
+@media(max-width:950px){.layout{grid-template-columns:1fr}.week{grid-template-columns:repeat(2,1fr)}}@media(max-width:550px){.app{padding:10px}.hero{padding:22px}.hero h1{font-size:28px}.stats{grid-template-columns:repeat(2,1fr)}.week{grid-template-columns:1fr}.entryrow{grid-template-columns:1fr 1fr}}
+@media print{body{background:#fff}.no-print{display:none}.panel{box-shadow:none}.hero{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="top"><div class="logo">🩺 <span>MEDORA</span> • Professional Planner</div><button class="no-print" onclick="toggleDark()">☾</button></div>
+
+<section class="hero">
+<div class="eyebrow">Professional Examination • December</div>
+<h1>My comeback season ✨</h1>
+<div class="quote" id="quote">“You don't need a perfect day. You need a day you showed up for.”</div>
+<div class="controls no-print">
+<label>Week <input id="week" type="date"></label>
+<label>Exam <input id="exam" type="date"></label>
+<button class="primary" onclick="render();showWeek()">Week view</button>
+<button onclick="newQuote()">✦ Motivation</button>
+<button onclick="window.print()">⌁ Save / Print</button>
+</div>
+</section>
+
+<div class="stats">
+<div class="stat"><small>Weekly progress</small><b id="progress">0%</b></div>
+<div class="stat"><small>Filled entries</small><b id="entries">0</b></div>
+<div class="stat"><small>Days planned</small><b id="days">0 / 7</b></div>
+<div class="stat"><small>Exam countdown</small><b id="countdown">—</b></div>
+</div>
+
+<div class="layout">
+<main class="panel">
+<div class="section"><b>📅 My Week</b><span class="small">Tap a day to open it</span></div>
+<div id="dayNav" style="display:flex;gap:6px;overflow-x:auto;padding:4px 0 12px"></div>
+<div class="week" id="calendar"></div>
+<div id="dayFocus" style="display:none"></div>
+</main>
+
+<aside class="panel">
+<div class="section"><b>🎯 Weekly intentions</b></div>
+<div class="check" id="checks">
+<label><input type="checkbox"> Finish planned topics</label>
+<label><input type="checkbox"> MCQs / past papers</label>
+<label><input type="checkbox"> Revise weak areas</label>
+<label><input type="checkbox"> Review mistakes</label>
+<label><input type="checkbox"> Sleep + proper breaks</label>
+</div>
+<div style="margin-top:17px"><b>🌷 Main goal</b><input id="goal" placeholder="This week's biggest goal…" style="width:100%;margin-top:7px"></div>
+<div style="margin-top:17px"><b>🎨 Theme</b><div class="palette"><i class="dot" style="background:#e6a7c8" onclick="accent('#a96791')"></i><i class="dot" style="background:#b9a6e7" onclick="accent('#8064ad')"></i><i class="dot" style="background:#9ed5e8" onclick="accent('#609db6')"></i><i class="dot" style="background:#add7b8" onclick="accent('#679977')"></i></div></div>
+<div class="motto">“Blocking, not just clocking.”<br><span class="small">One focused session at a time. ♡</span></div>
+</aside>
+</div>
+</div>
+
+<script>
+const subjects=Array.from({length:9},(_,i)=>"Subject "+(i+1));
+const quotes=["You don't need a perfect day. You need a day you showed up for.","Future you is built in the ordinary hours.","Small progress is still progress. Keep going.","Study with intention. Rest without guilt.","One chapter closer. One day stronger.","Your professional is a date, not a definition of you.","Consistency will carry you when motivation gets quiet.","You are allowed to start again today."];
+const now=new Date(), monday=new Date(now); monday.setDate(now.getDate()-((now.getDay()+6)%7));
+week.value=monday.toISOString().slice(0,10);
+exam.value=localStorage.getItem("medora-exam")||"2026-12-01";
+goal.value=localStorage.getItem("medora-goal")||"";
+goal.oninput=()=>localStorage.setItem("medora-goal",goal.value);
+function key(d,i){return "medora-v2-"+d.toISOString().slice(0,10)+"-"+i}
+function dateKey(d){return d.toISOString().slice(0,10)}
+
+let selectedDay=0, singleMode=false;
+function buildDayNav(){
+ const nav=document.getElementById("dayNav");nav.innerHTML="";
+ const base=new Date(week.value+"T12:00:00"), names=["MON","TUE","WED","THU","FRI","SAT","SUN"];
+ for(let d=0;d<7;d++){
+  const date=new Date(base);date.setDate(base.getDate()+d);
+  const b=document.createElement("button");
+  b.textContent=names[d]+" "+date.getDate();
+  b.style.cssText="white-space:nowrap;padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:"+(d===selectedDay?"var(--soft)":"#fff")+";font-size:11px;font-weight:750";
+  b.onclick=()=>{selectedDay=d;openDay(d);buildDayNav()};
+  nav.appendChild(b);
+ }
+}
+function openDay(d){
+ selectedDay=d;singleMode=true;
+ document.getElementById("calendar").style.display="none";
+ const focus=document.getElementById("dayFocus");focus.style.display="block";
+ const base=new Date(week.value+"T12:00:00");base.setDate(base.getDate()+d);
+ const names=["MON","TUE","WED","THU","FRI","SAT","SUN"];
+ const dayNameKey="medora-dayname-"+dateKey(base),dayDateKey="medora-daydate-"+dateKey(base);
+ focus.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+ <button onclick="previousDay()">← Previous</button><b>${names[d]} • ${base.toLocaleDateString(undefined,{day:"numeric",month:"long"})}</b><button onclick="nextDay()">Next →</button></div>
+ <div class="panel" style="box-shadow:none;padding:8px"><div class="dayhead">
+ <input class="dayname" id="focusName" value="${localStorage.getItem(dayNameKey)||names[d]}" style="font-size:15px">
+ <input class="daydate" id="focusDate" value="${localStorage.getItem(dayDateKey)||base.toLocaleDateString(undefined,{day:"numeric",month:"short"})}">
+ </div><div id="focusEntries"></div></div>`;
+ const dn=document.getElementById("focusName"),dd=document.getElementById("focusDate");
+ dn.oninput=()=>localStorage.setItem(dayNameKey,dn.value);dd.oninput=()=>localStorage.setItem(dayDateKey,dd.value);
+ const box=document.getElementById("focusEntries");
+ for(let i=0;i<9;i++){
+  const data=JSON.parse(localStorage.getItem(key(base,i))||"{}"),e=document.createElement("div");e.className="entry";
+  e.innerHTML=`<div class="entryrow"><input class="time" placeholder="Time" value="${data.time||""}"><input class="subject" placeholder="Subject ${i+1}" value="${data.subject||""}"></div><input class="topic" placeholder="Topic / task / BREAK / rest…" value="${data.topic||""}">`;
+  e.querySelectorAll("input").forEach(x=>x.oninput=()=>saveEntry(base,i,e));box.appendChild(e);
+ }
+}
+function previousDay(){if(selectedDay>0){selectedDay--;openDay(selectedDay);buildDayNav()}}
+function nextDay(){if(selectedDay<6){selectedDay++;openDay(selectedDay);buildDayNav()}else{let d=new Date(week.value+"T12:00:00");d.setDate(d.getDate()+7);week.value=d.toISOString().slice(0,10);selectedDay=0;render();openDay(0);buildDayNav()}}
+function showWeek(){singleMode=false;document.getElementById("dayFocus").style.display="none";document.getElementById("calendar").style.display="grid";buildDayNav()}
+function render(){
+ const base=new Date(week.value+"T12:00:00"), cal=document.getElementById("calendar");cal.innerHTML="";
+ const names=["MON","TUE","WED","THU","FRI","SAT","SUN"];
+ for(let d=0;d<7;d++){
+  const date=new Date(base);date.setDate(base.getDate()+d);
+  const day=document.createElement("div");day.className="day";
+  const dayNameKey="medora-dayname-"+dateKey(date),dayDateKey="medora-daydate-"+dateKey(date);
+  day.innerHTML=`<div class="dayhead"><input class="dayname" value="${localStorage.getItem(dayNameKey)||names[d]}" title="Edit day"><input class="daydate" value="${localStorage.getItem(dayDateKey)||date.toLocaleDateString(undefined,{day:"numeric",month:"short"})}" title="Edit date label"></div>`;
+  const dn=day.querySelector(".dayname"),dd=day.querySelector(".daydate");
+  dn.oninput=()=>localStorage.setItem(dayNameKey,dn.value);dd.oninput=()=>localStorage.setItem(dayDateKey,dd.value);
+  for(let i=0;i<9;i++){
+   const data=JSON.parse(localStorage.getItem(key(date,i))||"{}");
+   const e=document.createElement("div");e.className="entry";
+   e.innerHTML=`<div class="entryrow"><input class="time" placeholder="Time" value="${data.time||""}"><input class="subject" placeholder="${subjects[i]}" value="${data.subject||""}"></div><input class="topic" placeholder="Topic / task / BREAK / rest…" value="${data.topic||""}">`;
+   const inputs=e.querySelectorAll("input");inputs.forEach(x=>x.oninput=()=>saveEntry(date,i,e));
+   day.appendChild(e);
+  }
+  cal.appendChild(day);
+ }
+ update();updateCountdown();buildDayNav();
+}
+function saveEntry(date,i,e){
+ const q=e.querySelectorAll("input");localStorage.setItem(key(date,i),JSON.stringify({time:q[0].value,subject:q[1].value,topic:q[2].value}));update();
+}
+function update(){
+ const all=[...document.querySelectorAll(".entry input")],filled=all.filter(x=>x.value.trim()).length;
+ document.getElementById("entries").textContent=filled;
+ document.getElementById("progress").textContent=Math.round(filled/all.length*100)+"%";
+ let planned=0,base=new Date(week.value+"T12:00:00");
+ for(let d=0;d<7;d++){let date=new Date(base);date.setDate(base.getDate()+d);if(Array.from({length:9},(_,i)=>JSON.parse(localStorage.getItem(key(date,i))||"{}")).some(x=>x.time||x.subject||x.topic))planned++}
+ document.getElementById("days").textContent=planned+" / 7";
+}
+function updateCountdown(){localStorage.setItem("medora-exam",exam.value);const diff=Math.ceil((new Date(exam.value+"T00:00:00")-new Date())/86400000);document.getElementById("countdown").textContent=diff>0?diff+" days":diff===0?"TODAY":"Set date"}
+exam.onchange=updateCountdown;week.onchange=render;
+function newQuote(){quote.textContent="“"+quotes[Math.floor(Math.random()*quotes.length)]+"”"}
+function accent(c){document.documentElement.style.setProperty("--accent",c)}
+function toggleDark(){document.body.style.filter=document.body.style.filter?"":"brightness(.78)"}
+render();openDay(0);buildDayNav();
+</script>
+
+<div style="text-align:center;padding:14px 0 24px;color:#888;font-size:11px">
+  Medora • Your study plan stays in this browser
+</div>
+</body>
+</html>
