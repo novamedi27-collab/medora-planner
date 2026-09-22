@@ -9,6 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Medora Planner">
 <meta name="description" content="Medora — a flexible, aesthetic professional exam study planner.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png" type="image/png">
 
 <title>Medora • Professional Exam Planner</title>
 <style>
@@ -163,5 +165,13 @@ render();openDay(0);buildDayNav();
 <div style="text-align:center;padding:14px 0 24px;color:#888;font-size:11px">
   Medora • Your study plan stays in this browser
 </div>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+</script>
 </body>
 </html>
